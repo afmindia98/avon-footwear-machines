@@ -474,7 +474,7 @@ form.addEventListener('submit',e=>{
   const d=new FormData(form);
 
   // Log to Google Sheets (fire-and-forget, doesn't block the WhatsApp redirect)
-  fetch(SHEET_SCRIPT_URL,{
+  fetch(https://script.google.com/macros/s/AKfycbyKizEOuTHK1ht7bRvc_iehwdrfOhWgLd8lVikvcoflFLsiSV4A-uyYgTiJFVV3HOHmUw/exec,{
     method:'POST',
     mode:'no-cors',
     headers:{'Content-Type':'text/plain'},
