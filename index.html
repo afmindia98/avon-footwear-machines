@@ -467,22 +467,41 @@
     document.getElementById('closeModal').addEventListener('click',closeModal);
     modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
     document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
-    form.addEventListener('submit',e=>{
-      e.preventDefault();
-      const d=new FormData(form);
-      const msg=[
-        'Hello AVON FOOTWEAR MACHINES,',
-        '',
-        'I want a quotation / enquiry for footwear machinery.',
-        'Name: '+d.get('name'),
-        'Mobile: '+d.get('mobile'),
-        'Company: '+(d.get('company')||'Not provided'),
-        'Machine: '+d.get('machine'),
-        'Message: '+(d.get('message')||'Not provided')
-      ].join('\n');
-      window.open('https://wa.me/919953255750?text='+encodeURIComponent(msg),'_blank');
-      closeModal();
-      form.reset();
+    const SHEET_SCRIPT_URL = 'YOUR_SCRIPT_URL_HERE'; // paste your Apps Script Web App URL here
+
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const d=new FormData(form);
+
+  // Log to Google Sheets (fire-and-forget, doesn't block the WhatsApp redirect)
+  fetch(SHEET_SCRIPT_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify({
+      source:'website',
+      date:new Date().toISOString().split('T')[0],
+      name:d.get('name')||'',
+      mobile:d.get('mobile')||'',
+      company:d.get('company')||'',
+      machine:d.get('machine')||'',
+      message:d.get('message')||''
+    })
+  }).catch(()=>{}); // silently ignore errors so the WhatsApp flow always still works
+
+  const msg=[
+    'Hello AVON FOOTWEAR MACHINES,',
+    '',
+    'I want a quotation / enquiry for footwear machinery.',
+    'Name: '+d.get('name'),
+    'Mobile: '+d.get('mobile'),
+    'Company: '+(d.get('company')||'Not provided'),
+    'Machine: '+d.get('machine'),
+    'Message: '+(d.get('message')||'Not provided')
+  ].join('\n');
+  window.open('https://wa.me/919953255750?text='+encodeURIComponent(msg),'_blank');
+  closeModal();
+  form.reset();
     });
     menuBtn.addEventListener('click',()=>{
       const show=mobileMenu.classList.toggle('show'); menuBtn.setAttribute('aria-expanded',show?'true':'false');
